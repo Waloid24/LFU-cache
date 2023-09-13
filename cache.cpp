@@ -1,5 +1,7 @@
 #include "cache.hpp"
 
+int slow_get_page_int(int key) { return key; }
+
 int main(void)
 {
     using key_t = int;
@@ -8,7 +10,7 @@ int main(void)
     int hits = 0;
     
     int n;
-    std::size_t cache_size;
+    size_t cache_size;
 
     std::cout << "Cache size: ";
     std::cin >> cache_size;
@@ -20,6 +22,17 @@ int main(void)
 
     caches::LfuCache<key_t, page_t> my_cache{cache_size};
 
-    std::cout << hits << std::endl;
+    for (int i = 0; i < n; i++)
+    {
+        int rq;
+        std::cin >> rq;
+        assert(std::cin.good());
+        if (my_cache.lookup_update(rq, slow_get_page_int))
+        {
+            hits += 1;
+        }
+    }
+
+    std::cout << "HITS: " << hits << std::endl;
     return 0;
 }
