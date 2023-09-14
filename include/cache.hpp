@@ -94,7 +94,7 @@ namespace caches {
             void move_page(ht_iter hit)
             {
                 val_list_iter   val_list_elem_it    = hit->second;
-                auto             this_frq            = hit->first;
+                auto            this_frq            = hit->first;
                 frq_list_iter   this_frql_it        = val_list_elem_it->frql_it_;
                 frq_list_iter   next_frql_iter  = std::next(this_frql_it);
                 
