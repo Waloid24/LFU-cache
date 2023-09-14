@@ -3,41 +3,44 @@
 
 #include <iostream>
 #include <unordered_map>
-#include <cassert>
-#include <list>
 #include <algorithm>
+#include <list>
+#include <functional>
 
 namespace caches {
 
-    template<typename Key_t, typename Page_t>class LfuCache final {
+    template<typename Key_t, typename Page_t>class Lfu_Cache final {
 
-        size_t size_;
-        struct frqList;
-        using freq_list_iter = typename std::list<frqList>::iterator;
+        struct Frq_List;
+        struct Val_List;
 
-        struct valList {
+        using frq_list_iter = typename std::list<Frq_List>::iterator;
+        using val_list_iter = typename std::list<Val_List>::iterator;
+        using ht_iter       = typename std::unordered_map<Key_t, val_list_iter>::iterator;
+        using page_getter   = std::function<Page_t (const Key_t&)>;
+
+        struct Val_List {
             Key_t key_;
             Page_t page_;
-            freq_list_iter frql_it_;    
+            frq_list_iter frql_it_;
         };
 
-        struct frqList {
-            int freq_;
-            std::list<valList> vall_;
+        struct Frq_List {
+            int frq_;
+            std::list<Val_List> vall_;
 
-            explicit frqList(int freq) : freq_(freq){} // vall_ соберётся стандартным конструктором
+            explicit Frq_List(int frq) : frq_(frq){} 
         };
+
+        size_t size_;
+        page_getter slow_get_page_;
+        
+        std::list<Frq_List> frql_;
+        std::unordered_map<Key_t, val_list_iter> ht_; 
 
         public:
 
-            LfuCache(size_t size) : size_(std::max(size_t{1}, size)){}
-
-        private:
-
-        using val_list_iter = typename std::list<valList>::iterator;
-
-        std::list<frqList> frql_;
-        std::unordered_map<Key_t, val_list_iter> ht_;     
+            Lfu_Cache(size_t size, page_getter slow_get_page) : size_{std::max(size_t{1}, size)}, slow_get_page_{slow_get_page} {}
 
             bool full() const { 
                 return (ht_.size() == size_);
@@ -47,79 +50,71 @@ namespace caches {
                 return (ht_.size() == 0);
             }
 
-        public:
-
-            template <typename F> bool lookup_update(Key_t key, F slow_get_page) {
+            bool lookup_update(const Key_t &key) {
 
                 auto hit = ht_.find(key);
                 if (hit == ht_.end())
                 {
-                    std::cout << "Cache doesn't contain key [" << key << "]" << std::endl;
-
-                    freq_list_iter itOfListFreqAtBegin = frql_.begin();     //итератор на начальный элемент в списке частот
-                    
-                    if (itOfListFreqAtBegin == frql_.end())         // хэш-таблица пустая
-                    {
-                        std::cout << "Hashtable is empty" << std::endl;
-                        frqList &emplacedElem = frql_.emplace_back(1); 
-                        emplacedElem.vall_.emplace_back(key, slow_get_page(key), itOfListFreqAtBegin);
-                        ht_.emplace(key, emplacedElem.vall_.begin());
-                        return false;
-                    }
-
-                    auto &val_list_with_low_freq = itOfListFreqAtBegin->vall_;
-
-                    if (full())
-                    {
-                        std::cout << "Cache is full" << std::endl;
-
-                        ht_.erase(ht_.find(val_list_with_low_freq.begin()->key_));
-                        val_list_with_low_freq.pop_front();
-                    }
-
-                    val_list_with_low_freq.emplace_front(key, slow_get_page(key), itOfListFreqAtBegin);
-                    ht_.try_emplace(key, val_list_with_low_freq.begin());
-
+                    insert_page(key);
                     return false;
                 }
                 else
                 {
-                    std::cout << "Cache contains key [" << key << "]" << std::endl;
-
-                    val_list_iter val_list_elem_iter    = hit->second; // итератор на элемент списка ValList
-                    int freq_this_val_list              = hit->first;
-                    freq_list_iter this_freq_list_iter  = val_list_elem_iter->frql_it_;
-                    freq_list_iter next_freq_list_iter  = std::next(this_freq_list_iter);
-                    
-                    if (next_freq_list_iter == frql_.end() || next_freq_list_iter->freq_ != freq_this_val_list + 1)
-                    {
-                        if (next_freq_list_iter == frql_.end())
-                            std::cout << "Next freq list item is NULL" << std::endl;
-                        else
-                            std::cout << "Next freq != this freq + 1" << std::endl;
-
-                        frql_.emplace(next_freq_list_iter, freq_this_val_list+1);
-                        next_freq_list_iter = std::next(this_freq_list_iter);
-                    }
-
-                    auto &next_val_list = next_freq_list_iter->vall_;
-
-                    next_val_list.splice(next_val_list.end(), this_freq_list_iter->vall_, val_list_elem_iter);
-                    val_list_elem_iter->frql_it_ = next_freq_list_iter;
-
-                    if (this_freq_list_iter->vall_.empty())
-                    {
-                        frql_.erase(this_freq_list_iter);
-                    }
-
+                    move_page(hit);
                     return true;
                 }
-
-                
             }
             
-    };
+        private:
 
+            void insert_page(const Key_t &key)
+            {
+                frq_list_iter frst_frql_elem_it = frql_.begin();
+                
+                if (frst_frql_elem_it == frql_.end())
+                {
+                    Frq_List &new_frql_elem = frql_.emplace_back(1); 
+                    new_frql_elem.vall_.emplace_back(key, slow_get_page_(key), frql_.begin());
+                    ht_.emplace(key, new_frql_elem.vall_.begin());
+                    return;
+                }
+
+                auto &lfu = frst_frql_elem_it->vall_;
+
+                if (full())
+                {
+                    ht_.erase(ht_.find(lfu.begin()->key_));
+                    lfu.pop_front();
+                }
+
+                lfu.emplace_front(key, slow_get_page_(key), frst_frql_elem_it);
+                ht_.emplace(key, lfu.begin());
+            }
+
+            void move_page(ht_iter hit)
+            {
+                val_list_iter   val_list_elem_it    = hit->second;
+                auto             this_frq            = hit->first;
+                frq_list_iter   this_frql_it        = val_list_elem_it->frql_it_;
+                frq_list_iter   next_frql_iter  = std::next(this_frql_it);
+                
+                if (next_frql_iter == frql_.end() || next_frql_iter->frq_ != this_frq + 1)
+                {
+                    frql_.emplace(next_frql_iter, this_frq+1);
+                    next_frql_iter = std::next(this_frql_it);
+                }
+
+                auto &next_val_list = next_frql_iter->vall_;
+
+                next_val_list.splice(next_val_list.end(), this_frql_it->vall_, val_list_elem_it);
+                val_list_elem_it->frql_it_ = next_frql_iter;
+
+                if (this_frql_it->vall_.empty())
+                {
+                    frql_.erase(this_frql_it);
+                }
+            }
+    };
 }
 
 #endif
