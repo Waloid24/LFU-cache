@@ -1,5 +1,9 @@
-#ifndef CACHE_HPP
-#define CACHE_HPP
+// <your_path>/LFU-cache/build$ cmake -DDUSE_IDEAL_CACHE=OFF ..
+// <your_path>/LFU-cache/build$ make
+// <your_path>/LFU-cache/build$ ./cache
+
+#ifndef LFU_CACHE_HPP
+#define LFU_CACHE_HPP
 
 #include <iostream>
 #include <unordered_map>
@@ -29,7 +33,7 @@ namespace caches {
             int frq_;
             std::list<Val_List> vall_;
 
-            explicit Frq_List(int frq) : frq_(frq){} 
+            Frq_List(int frq) : frq_(frq){}
         };
 
         size_t size_;
@@ -44,10 +48,6 @@ namespace caches {
 
             bool full() const { 
                 return (ht_.size() == size_);
-            }
-
-            bool empty() const {
-                return (ht_.size() == 0);
             }
 
             bool lookup_update(const Key_t &key) {

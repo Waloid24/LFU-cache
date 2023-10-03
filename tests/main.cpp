@@ -1,11 +1,11 @@
-/*Using 
+/*Using for compiling this file:
 	g++ -std=c++20 main.cpp -o test -lgtest -pthread
-  for compiling this file and run with:
+  and run with:
 	./test
 */
 
 #include <gtest/gtest.h>
-#include "../include/cache.hpp"
+#include "cache.hpp"
 
 int slow_get_page_int(int key) { return key; }
 

@@ -1,5 +1,4 @@
-// #include "cache.hpp"
-#include "./include/ideal_cache.hpp"
+#include "cache.hpp"
 #include <cassert>
 
 int slow_get_page_int(int key) { return key; }
@@ -9,25 +8,33 @@ int main(void)
     using key_t = int;
     using page_t = key_t;
     
-    int n;
     size_t cache_size;
+    int n;
 
     std::cin >> cache_size;
-    assert(std::cin.good());
-
+    if (!std::cin.good())
+    {
+        std::abort();
+    }
     std::cin >> n;
-    assert(std::cin.good());
-
-    // caches::Lfu_Cache<key_t, page_t> my_cache{cache_size, slow_get_page_int};
-    ideal_cache::Ideal_Cache<key_t, page_t> my_cache{cache_size, slow_get_page_int};
-
+    if (!std::cin.good())
+    {
+        std::abort();
+    }
+    
+    caches::Lfu_Cache<key_t, page_t> my_cache{cache_size, slow_get_page_int};
 
     int hits = 0;
+
     for (int i = 0; i < n; i++)
     {
         int rq;
         std::cin >> rq;
-        assert(std::cin.good());
+        
+        if (!std::cin.good())
+        {
+            std::abort();
+        }
         hits += my_cache.lookup_update(rq);
     }
 
