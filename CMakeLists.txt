@@ -12,7 +12,7 @@ message(STATUS "CMAKE_BINARY_DIR = ${CMAKE_BINARY_DIR}")
 
 # if(TESTING_LFU)
     add_subdirectory(
-        "tests"
+        "testing"
     )
     add_subdirectory(
         "/usr/src/gtest" ${CMAKE_BINARY_DIR}/gtest

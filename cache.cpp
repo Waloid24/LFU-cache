@@ -30,11 +30,11 @@ int main(void)
     {
         int rq;
         std::cin >> rq;
-        
         if (!std::cin.good())
         {
             std::abort();
         }
+        
         hits += my_cache.lookup_update(rq);
     }
 
