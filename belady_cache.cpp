@@ -1,4 +1,5 @@
-#include "ideal_cache.hpp"
+#include <iostream>
+#include "belady_cache.hpp"
 
 int slow_get_page_int(int key) { return key; }
 
@@ -36,7 +37,7 @@ int main(void)
         rq_array.emplace_back(rq);
     }
 
-    ideal_cache::Ideal_Cache<key_t, page_t> my_cache{rq_array.begin(), rq_array.end(), 5, slow_get_page_int};
+    belady_caches::Belady_cache<key_t, page_t> my_cache{rq_array.begin(), rq_array.end(), cache_size, slow_get_page_int};
 
     int hits = 0;
 

@@ -8,19 +8,19 @@ function mk_dir
 
 function run_tests
 {
-    local ideal_cache="../build/lfu_cache_ideal"
+    local belady_cache="../build/belady_cache"
     local lfu_cache="../build/lfu_cache"
 
     local lfu_result_dir="result/lfu_cache"
-    local ideal_result_dir="result/ideal_cache"
+    local belady_result_dir="result/belady_cache"
 
     mk_dir ${lfu_result_dir}
-    mk_dir ${ideal_result_dir}
+    mk_dir ${belady_result_dir}
 
-    echo "The ideal cache is working..."
+    echo "The belady cache is working..."
     for ((i=0; i<$n_tests; i++))
     do
-        $ideal_cache < tests/test_${i}.txt > ${ideal_result_dir}/ideal_cache_results_${i}.txt
+        $belady_cache < tests/test_${i}.txt > ${belady_result_dir}/belady_cache_results_${i}.txt
     done
     echo -en "\n"
 
@@ -35,9 +35,9 @@ function run_tests
 function build_graphs
 {
     local lfu_result_dir="result/lfu_cache"
-    local ideal_result_dir="result/ideal_cache"
+    local belady_result_dir="result/belady_cache"
 
-    python3 make_graphs.py ${n_tests} ${lfu_result_dir} ${ideal_result_dir}
+    python3 make_graphs.py ${n_tests} ${lfu_result_dir} ${belady_result_dir}
 }
 
 n_tests=$1

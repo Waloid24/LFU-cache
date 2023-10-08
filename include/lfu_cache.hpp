@@ -1,4 +1,4 @@
-// <your_path>/LFU-cache/build$ cmake -DDUSE_IDEAL_CACHE=OFF ..
+// <your_path>/LFU-cache/build$ cmake -DDUSE_belady_CACHE=OFF ..
 // <your_path>/LFU-cache/build$ make
 // <your_path>/LFU-cache/build$ ./cache
 

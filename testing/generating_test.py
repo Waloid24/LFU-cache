@@ -6,8 +6,8 @@ def generate_tests (n_tests: int, output_dir):
 
     for test_i in range (n_tests):
 
-        cache_size: int = np.random.randint(50, 100)
-        n_keys: int = np.random.randint(10, 100)
+        cache_size: int = np.random.randint(100, 1000)
+        n_keys: int = np.random.randint(1000, 10000)
 
         laplace     = np.random.laplace(0, 20, n_keys)
         binomial    = np.random.binomial(50, 0.1, n_keys)
