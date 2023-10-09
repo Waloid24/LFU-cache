@@ -14,7 +14,8 @@ And Belady-cache implementation with complexity:
 ## LFU-cache
 
 ### Structure
-![my LFU-cache structure](./images/lfu_cache.jpg)
+
+<img src="./images/lfu_cache.jpg" width="600">
 
 The class is wrapped in the 'caches' namespace.
 
@@ -34,6 +35,7 @@ In the case when it is necessary to displace some element from the filled cache,
 
 ### Structure
 ![my Belady-cache structure](./images/belady_cache.jpg)
+
 
 When constructing an belady cache, we first bypass the entire sequence of requests and create a "Storage", as a result of which the time complexity of finding an element to displace will decrease from **O(m*n)** to **O(m)**, where m is the cache capacity and n is the number of requests.
 
