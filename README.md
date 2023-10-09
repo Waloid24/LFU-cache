@@ -2,14 +2,13 @@
 
 ## About
 Here is my LFU-cache implementation with complexity:
-    - removing **O(1)**;
-    - insertion **O(1)**;
-    - search **O(1)**.
+- removing **O(1)**;
+- insertion **O(1)**;
+- search **O(1)**.
 and Belady-cache implementation with complexity:
-    - removing **O(1)**;
-    - insertion **O(1)**;
-    - search **O(m)**, where m is the cache capacity.
-
+- removing **O(1)**;
+- insertion **O(1)**;
+- search **O(m)**, where m is the cache capacity.
 
 ## LFU-cache
 
