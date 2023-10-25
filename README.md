@@ -46,6 +46,10 @@ The class is wrapped in the 'belady_caches' namespace.
 The function `lookup_update()` allows you to save new elements to the cache. If the 'key' is already used in the cache, the function returns 'true', otherwize 'false'.
 The function `full()` checks if the cache is full.
 
+## Comparison
+Let's compare how much LFU-Cache is inferior to the Belady-cache:
+![my Belady-cache structure](./images/algorithm_comparison.jpg)
+
 ## Build
 
 For compile this project, type:

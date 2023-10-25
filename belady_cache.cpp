@@ -43,9 +43,9 @@ int main()
 
     int hits = 0;
 
-    for (rq_iter rq = rq_array.begin(), rq_end = rq_array.end(); rq != rq_end; ++rq)
+    for (auto i : rq_array)
     {
-        hits += my_cache.lookup_update(*rq);
+        hits += my_cache.lookup_update(i);
     }
 
     std::cout << hits << std::endl;
