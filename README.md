@@ -48,7 +48,7 @@ The function `full()` checks if the cache is full.
 
 ## Comparison
 Let's compare how much LFU-Cache is inferior to the Belady-cache:
-![my Belady-cache structure](./images/algorithm_comparison.jpg)
+![my Belady-cache structure](./images/algorithm_comparison.png)
 
 ## Build
 
