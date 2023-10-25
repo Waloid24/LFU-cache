@@ -1,5 +1,4 @@
 #include "lfu_cache.hpp"
-#include <cassert>
 
 int slow_get_page_int(int key) { return key; }
 

@@ -28,6 +28,14 @@ function run_tests
     for ((i=0; i<$n_tests; i++))
     do
         $lfu_cache < tests/test_${i}.txt > ${lfu_result_dir}/lfu_cache_results_${i}.txt
+
+        echo -n "Test $((i + 1)): "
+        if diff -Z ${belady_result_dir}/belady_cache_results_${i}.txt ${lfu_result_dir}/lfu_cache_results_${i}.txt > /dev/null
+        then
+            echo -e "${green}passed${default}"
+        else
+            echo -e "${red}failed${default}"
+        fi
     done
     echo -en "\n"
 }

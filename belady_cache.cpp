@@ -1,9 +1,11 @@
 #include <iostream>
-#include "belady_cache.hpp"
+#include <stdexcept>
+#include <vector>
+#include "include/belady_cache.hpp"
 
 int slow_get_page_int(int key) { return key; }
 
-int main(void)
+int main()
 {
     using key_t = int;
     using page_t = key_t;

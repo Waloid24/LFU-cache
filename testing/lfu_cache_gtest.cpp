@@ -1,9 +1,3 @@
-/*Using for compiling this file:
-	g++ -std=c++20 main.cpp -o test -lgtest -pthread
-  and run with:
-	./test
-*/
-
 #include <gtest/gtest.h>
 #include "lfu_cache.hpp"
 
